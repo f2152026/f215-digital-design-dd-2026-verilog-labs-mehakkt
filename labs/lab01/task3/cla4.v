@@ -31,7 +31,9 @@ module cla4(
   wire g0, g1, g2, g3;
   wire c1, c2, c3;
 
-    // Step 1: Generate and Propagate signals
+  // TODO: your gate-level P/G, carry, and sum logic goes here.
+  // (cout should be connected to c4.) Remember the delay on every gate.
+  wire p0cin, p1g0, p1p0cin, p2g1, p2p1g0, p2p1p0cin, p3g2, p3p2g1, p3p2p1g0, p3p2p1p0cin;
 
   xor #(2) (p0, a[0], b[0]);
   xor #(2) (p1, a[1], b[1]);
@@ -43,44 +45,24 @@ module cla4(
   and #(2) (g2, a[2], b[2]);
   and #(2) (g3, a[3], b[3]);
 
+  and #(2) (p0cin, p0, cin);
 
-  // Step 2: Carry Look-Ahead logic
+  and #(2) (p1g0, p1, g0);
+  and #(2) (p1p0cin, p1, p0, cin);
 
-  wire t_c1;
+  and #(2) (p2g1, p2, g1);
+  and #(2) (p2p1g0, p2, p1, g0);
+  and #(2) (p2p1p0cin, p2, p1, p0, cin);
 
-  and #(2) (t_c1, p0, cin);
-  or  #(2) (c1, g0, t_c1);
+  and #(2) (p3g2, p3, g2);
+  and #(2) (p3p2g1, p3, p2, g1);
+  and #(2) (p3p2p1g0, p3, p2, p1, g0);
+  and #(2) (p3p2p1p0cin, p3, p2, p1, p0, cin);
 
-
-  wire t_c2_1, t_c2_2;
-
-  and #(2) (t_c2_1, p1, g0);
-  and #(2) (t_c2_2, p1, p0, cin);
-  or  #(2) (c2, g1, t_c2_1, t_c2_2);
-
-
-  wire t_c3_1, t_c3_2, t_c3_3;
-
-  and #(2) (t_c3_1, p2, g1);
-  and #(2) (t_c3_2, p2, p1, g0);
-  and #(2) (t_c3_3, p2, p1, p0, cin);
-  or  #(2) (c3, g2, t_c3_1, t_c3_2, t_c3_3);
-
-
-  wire c4;
-  wire t_c4_1, t_c4_2, t_c4_3, t_c4_4;
-
-  and #(2) (t_c4_1, p3, g2);
-  and #(2) (t_c4_2, p3, p2, g1);
-  and #(2) (t_c4_3, p3, p2, p1, g0);
-  and #(2) (t_c4_4, p3, p2, p1, p0, cin);
-
-  or #(2) (c4, g3, t_c4_1, t_c4_2, t_c4_3, t_c4_4);
-
-  assign #(2) cout = c4;
-
-
-  // Step 3: Sum bits
+  or #(2) (c1, g0, p0cin);
+  or #(2) (c2, g1, p1g0, p1p0cin);
+  or #(2) (c3, g2, p2g1, p2p1g0, p2p1p0cin);
+  or #(2) (cout, g3, p3g2, p3p2g1, p3p2p1g0, p3p2p1p0cin);
 
   xor #(2) (sum[0], p0, cin);
   xor #(2) (sum[1], p1, c1);
