@@ -10,6 +10,6 @@ module and_beh_before (
 
   always @(*) begin
     #3 y = a & b;
-  end
+  end 
 
 endmodule
